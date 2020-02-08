@@ -1,2 +1,2 @@
-# gobarber
-Projeto GoBarber do Bootcamp GoStack da Rocketseat
+# :rocket: GoBarber</h1>
+Project from RocketSeat's  GoStack bootcamp :rocket:
