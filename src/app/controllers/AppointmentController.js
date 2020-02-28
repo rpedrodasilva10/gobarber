@@ -1,11 +1,15 @@
 import * as Yup from 'yup';
 import Appointment from '../models/Appointment';
 import User from '../models/User';
+<<<<<<< HEAD
 import File from '../models/File';
 import { startOfHour, parseISO, isBefore, format } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
 import Notification from '../schemas/Notification';
+=======
+import { startOfHour, parseISO, isBefore } from 'date-fns';
+>>>>>>> 4a0d533... Add validations on appointment availabity and past dates with date-fns module
 
 class AppointmentController {
   async store(req, res) {
