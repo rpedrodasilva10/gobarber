@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 import Appointment from '../models/Appointment';
 import User from '../models/User';
+import File from '../models/File';
 import { startOfHour, parseISO, isBefore } from 'date-fns';
 
 class AppointmentController {
@@ -9,12 +10,12 @@ class AppointmentController {
       provider_id: Yup.string().required(),
       date: Yup.date().required(),
     });
-    const { user_id, provider_id, date } = req.body;
+    const { provider_id, date } = req.body;
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
-    // Check if a given ID is a provider
+
     const isProvider = await User.findOne({
       where: {
         id: provider_id,
@@ -54,6 +55,33 @@ class AppointmentController {
     });
 
     return res.json(appointment);
+  }
+
+  async index(req, res) {
+    const appointments = await Appointment.findAll({
+      where: {
+        user_id: req.userId,
+        canceled_at: null,
+      },
+      order: ['date'],
+      attributes: ['id', 'date'],
+      include: [
+        {
+          model: User,
+          as: 'provider',
+          attributes: ['id', 'name'],
+          include: [
+            {
+              model: File,
+              as: 'avatar',
+              attributes: ['path', 'url'],
+            },
+          ],
+        },
+      ],
+    });
+
+    return res.status(200).json({ appointments: appointments });
   }
 }
 
