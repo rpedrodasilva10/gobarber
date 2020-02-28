@@ -24,7 +24,6 @@ class AppointmentController {
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
-
     const isProvider = await User.findOne({
       where: {
         id: provider_id,
