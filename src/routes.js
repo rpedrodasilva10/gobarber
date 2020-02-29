@@ -6,10 +6,7 @@ import ProviderController from './app/controllers/ProviderController';
 import AppointmentController from './app/controllers/AppointmentController';
 import ScheduleController from './app/controllers/ScheduleController';
 import FileController from './app/controllers/FileController';
-<<<<<<< HEAD
 import NotificationController from './app/controllers/NotificationController';
-=======
->>>>>>> 0cc3d26... fix: avatar file upload
 
 import multer from 'multer';
 import multerConfig from './config/multer';
@@ -32,7 +29,6 @@ routes.post('/files', upload.single('file'), FileController.store);
 routes.get('/appointments', AppointmentController.index);
 routes.post('/appointments', AppointmentController.store);
 
-<<<<<<< HEAD
 routes.get('/providers', ProviderController.index);
 
 routes.post('/files', upload.single('file'), FileController.store);
@@ -44,8 +40,4 @@ routes.get('/schedules', ScheduleController.index);
 
 routes.get('/notifications', NotificationController.index);
 
-=======
-routes.get('/schedules', ScheduleController.index);
-
->>>>>>> 0cc3d26... fix: avatar file upload
 export default routes;
