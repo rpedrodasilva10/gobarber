@@ -6,6 +6,7 @@ import ProviderController from './app/controllers/ProviderController';
 import AppointmentController from './app/controllers/AppointmentController';
 import ScheduleController from './app/controllers/ScheduleController';
 import FileController from './app/controllers/FileController';
+import NotificationController from './app/controllers/NotificationController';
 
 import multer from 'multer';
 import multerConfig from './config/multer';
@@ -29,5 +30,7 @@ routes.get('/appointments', AppointmentController.index);
 routes.post('/appointments', AppointmentController.store);
 
 routes.get('/schedules', ScheduleController.index);
+
+routes.get('/notifications', NotificationController.index);
 
 export default routes;
