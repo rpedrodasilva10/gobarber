@@ -10,10 +10,14 @@ class File extends Model {
           type: Sequelize.VIRTUAL,
           get() {
 <<<<<<< HEAD
+<<<<<<< HEAD
             return `http://localhost:3000/files/${this.path}`;
 =======
             return `http://localhost:3333/files/${this.path}`;
 >>>>>>> 97459f4... Add index providers with avatar file url
+=======
+            return `http://localhost:3000/files/${this.path}`;
+>>>>>>> 4d31c56... feat: create notifications and mongodb connection
           },
         },
       },
