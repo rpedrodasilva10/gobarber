@@ -126,10 +126,15 @@ class AppointmentController {
           as: 'provider',
           attributes: ['name', 'email'],
         },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['name'],
+        },
       ],
     });
 
-    const { canceledAt, date } = appointment;
+    const { canceled_at, date } = appointment;
 
     if (appointment.user_id !== req.userId) {
       return res.status(401).json({
@@ -137,12 +142,12 @@ class AppointmentController {
       });
     }
 
-    const isCanceled = canceledAt != null;
+    const isCanceled = canceled_at && canceled_at;
     const canCancel = isAfter(subHours(date, 2), new Date());
 
     if (isCanceled) {
       return res.status(400).json({
-        error: `Appointment already canceled at ${canceledAt}`,
+        error: `Appointment already canceled at ${canceled_at}`,
       });
     }
 
@@ -158,7 +163,14 @@ class AppointmentController {
     await Mail.sendMail({
       to: `${appointment.provider.name} <${appointment.provider.email}>`,
       subject: 'Agendamento cancelado',
-      text: 'Você tem um novo cancelamento',
+      template: 'cancellation',
+      context: {
+        provider: appointment.provider.name,
+        user: appointment.user.name,
+        date: format(appointment.date, "'dia' dd 'de' MMMM', às' h:mm'h'", {
+          locale: pt,
+        }),
+      },
     });
     return res.json(appointment);
   }

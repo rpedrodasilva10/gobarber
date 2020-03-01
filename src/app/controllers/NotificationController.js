@@ -23,7 +23,6 @@ class NotificationController {
       'content createdAt'
     ).sort({ createdAt: 'desc' });
 
-    console.log(notifications);
     return res.status(200).json(notifications);
   }
 
