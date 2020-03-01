@@ -24,10 +24,10 @@ class Database {
   }
 
   mongo() {
-    this.mongoConnection = mongoose.connect(
-      'mongodb+srv://gobarber:gobarber@cluster0-zi1wz.mongodb.net/gobarber?retryWrites=true&w=majority',
-      { useNewUrlParser: true, useFindAndModify: true }
-    );
+    this.mongoConnection = mongoose.connect(process.env.MONG_URL, {
+      useNewUrlParser: true,
+      useFindAndModify: true,
+    });
   }
 }
 
