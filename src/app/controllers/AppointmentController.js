@@ -4,6 +4,8 @@ import User from '../models/User';
 import Notification from '../schemas/Notification';
 import File from '../models/File';
 
+import Mail from '../../lib/Mail';
+
 import {
   startOfHour,
   parseISO,
@@ -117,9 +119,17 @@ class AppointmentController {
   async delete(req, res) {
     const appointment_id = req.params.id;
 
-    let appointment = await Appointment.findByPk(appointment_id);
+    let appointment = await Appointment.findByPk(appointment_id, {
+      include: [
+        {
+          model: User,
+          as: 'provider',
+          attributes: ['name', 'email'],
+        },
+      ],
+    });
 
-    const { canceledAt, createdAt } = appointment;
+    const { canceledAt, date } = appointment;
 
     if (appointment.user_id !== req.userId) {
       return res.status(401).json({
@@ -128,7 +138,7 @@ class AppointmentController {
     }
 
     const isCanceled = canceledAt != null;
-    const canCancel = isAfter(subHours(createdAt, 2), new Date());
+    const canCancel = isAfter(subHours(date, 2), new Date());
 
     if (isCanceled) {
       return res.status(400).json({
@@ -138,11 +148,18 @@ class AppointmentController {
 
     if (!canCancel) {
       return res.status(400).json({
-        error: `Can only cancel until two hours before the appointment `,
+        error: `Can only cancel until two hours before the appointment ${
+          appointment.date
+        }, ${new Date()}`,
       });
     }
     await appointment.update({ canceled_at: new Date() });
 
+    await Mail.sendMail({
+      to: `${appointment.provider.name} <${appointment.provider.email}>`,
+      subject: 'Agendamento cancelado',
+      text: 'Você tem um novo cancelamento',
+    });
     return res.json(appointment);
   }
 }
