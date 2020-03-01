@@ -1,15 +1,18 @@
 import * as Yup from 'yup';
 import Appointment from '../models/Appointment';
 import User from '../models/User';
-
-import File from '../models/File';
-import { startOfHour, parseISO, isBefore, format } from 'date-fns';
-import pt from 'date-fns/locale/pt';
-
 import Notification from '../schemas/Notification';
 import File from '../models/File';
 
-import { startOfHour, parseISO, isBefore } from 'date-fns';
+import {
+  startOfHour,
+  parseISO,
+  isBefore,
+  format,
+  subHours,
+  isAfter,
+} from 'date-fns';
+import pt from 'date-fns/locale/pt';
 
 class AppointmentController {
   async store(req, res) {
@@ -109,6 +112,38 @@ class AppointmentController {
     });
 
     return res.status(200).json({ appointments: appointments });
+  }
+
+  async delete(req, res) {
+    const appointment_id = req.params.id;
+
+    let appointment = await Appointment.findByPk(appointment_id);
+
+    const { canceledAt, createdAt } = appointment;
+
+    if (appointment.user_id !== req.userId) {
+      return res.status(401).json({
+        error: `You don't have permission to cancel this appointment`,
+      });
+    }
+
+    const isCanceled = canceledAt != null;
+    const canCancel = isAfter(subHours(createdAt, 2), new Date());
+
+    if (isCanceled) {
+      return res.status(400).json({
+        error: `Appointment already canceled at ${canceledAt}`,
+      });
+    }
+
+    if (!canCancel) {
+      return res.status(400).json({
+        error: `Can only cancel until two hours before the appointment `,
+      });
+    }
+    await appointment.update({ canceled_at: new Date() });
+
+    return res.json(appointment);
   }
 }
 
